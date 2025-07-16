@@ -8,23 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Activity, TrendingUp, Globe, Filter, Download, RefreshCw } from 'lucide-react';
-import * as htmlToImage from 'html-to-image';
 
 const Dashboards = () => {
   const chartRef = useRef(null);
 
-  const handleExport = async () => {
-  const node = document.getElementById('my-graph');
 
-  if (!node) return;
-
-  const dataUrl = await htmlToImage.toPng(node);
-  
-  const link = document.createElement('a');
-  link.download = 'chart.png';
-  link.href = dataUrl;
-  link.click();
-};
 
   const [selectedTimeRange, setSelectedTimeRange] = useState('1year');
   const [selectedRegion, setSelectedRegion] = useState('all');
@@ -144,7 +132,7 @@ const Dashboards = () => {
      
 
 
-              <Button variant="outline" size="sm" onClick={handleExport}>
+              <Button variant="outline" size="sm" >
                 <Download className="w-4 h-4 mr-2" />
                  Export
               </Button>
