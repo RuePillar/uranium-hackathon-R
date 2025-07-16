@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import FunctionalDashboard from '@/components/FunctionalDashboard';
@@ -8,8 +8,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Activity, TrendingUp, Globe, Filter, Download, RefreshCw } from 'lucide-react';
+import * as htmlToImage from 'html-to-image';
 
 const Dashboards = () => {
+  const chartRef = useRef(null);
+
+  const handleExport = () => {
+    if (chartRef.current === null) return;
+
+    htmlToImage.toPng(chartRef.current, { cacheBust: true })
+      .then((dataUrl) => {
+        const link = document.createElement('a');
+        link.download = 'dashboard-chart.png';
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((err) => {
+        console.error('Failed to export image', err);
+      });
+  };
+
   const [selectedTimeRange, setSelectedTimeRange] = useState('1year');
   const [selectedRegion, setSelectedRegion] = useState('all');
 
@@ -44,6 +62,33 @@ const Dashboards = () => {
     { year: '2023', direct: 10500, indirect: 15000 },
     { year: '2024', direct: 11200, indirect: 16000 }
   ];
+  const filteredProductionData = productionData.filter((entry, index) => {
+  // Time range logic
+  if (selectedTimeRange === '1month') return index >= productionData.length - 1;
+  if (selectedTimeRange === '3months') return index >= productionData.length - 3;
+  if (selectedTimeRange === '6months') return index >= productionData.length - 6;
+
+  return true; // default: 1year, 5years, etc.
+});
+<ResponsiveContainer width="100%" height="100%">
+  <BarChart data={filteredProductionData}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="month" />
+    <YAxis />
+    <Tooltip />
+    
+    {(selectedRegion === 'all' || selectedRegion === 'erongo') && (
+      <Bar dataKey="rossing" fill="#ff6b6b" name="Rössing" />
+    )}
+    {(selectedRegion === 'all' || selectedRegion === 'erongo') && (
+      <Bar dataKey="husab" fill="#4ecdc4" name="Husab" />
+    )}
+    {(selectedRegion === 'all' || selectedRegion === 'otjozondjupa') && (
+      <Bar dataKey="langerHeinrich" fill="#8884d8" name="Langer Heinrich" />
+    )}
+  </BarChart>
+</ResponsiveContainer>
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,10 +143,12 @@ const Dashboards = () => {
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Refresh
                 </Button>
-                <Button variant="outline" size="sm">
-                  <Download className="w-4 h-4 mr-2" />
-                  Export
-                </Button>
+            
+
+              <Button variant="outline" size="sm" onClick={handleExport}>
+                <Download className="w-4 h-4 mr-2" />
+                 Export
+              </Button>
               </div>
             </div>
           </div>

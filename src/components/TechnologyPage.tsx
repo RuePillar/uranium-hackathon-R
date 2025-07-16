@@ -2,32 +2,31 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, Cpu, Zap, Shield, Globe, Microscope, Satellite } from 'lucide-react';
+import { Download, Cpu, Zap, Shield, Globe, Microscope, Satellite, Users } from 'lucide-react';
 import AISection from './AISection';
 import WhatsLackingSection from './WhatsLackingSection';
+import { useRouter } from 'next/router';
 
 const TechnologyPage = () => {
+  const router = useRouter();
+
   const generateStrategyReport = async () => {
-    // Import jsPDF dynamically
     const { jsPDF } = await import('jspdf');
-    
     const doc = new jsPDF();
-    
-    // Add title
+
     doc.setFontSize(20);
     doc.text('NAMIBIA URANIUM MINING TECHNOLOGY & AI STRATEGY REPORT', 20, 30);
-    
+
     doc.setFontSize(16);
     doc.text('EXECUTIVE SUMMARY', 20, 50);
-    
+
     doc.setFontSize(12);
-    const summary = 'This comprehensive report outlines the current state and future potential of technology and artificial intelligence applications in Namibia\'s uranium mining industry.';
+    const summary = `This comprehensive report outlines the current state and future potential of technology and artificial intelligence applications in Namibia's uranium mining industry.`;
     doc.text(summary, 20, 65, { maxWidth: 170 });
-    
+
     doc.setFontSize(16);
     doc.text('CURRENT TECHNOLOGY LANDSCAPE', 20, 90);
-    
-    doc.setFontSize(12);
+
     const technologies = [
       '1. Mining Automation',
       '   - Autonomous haul trucks at major mines',
@@ -44,20 +43,17 @@ const TechnologyPage = () => {
       '   - Groundwater monitoring systems',
       '   - Dust suppression technologies'
     ];
-    
+
     let yPos = 105;
     technologies.forEach(line => {
       doc.text(line, 20, yPos);
       yPos += 6;
     });
-    
-    // Add new page
+
     doc.addPage();
-    
     doc.setFontSize(16);
     doc.text('AI APPLICATIONS IN URANIUM MINING', 20, 30);
-    
-    doc.setFontSize(12);
+
     const aiApps = [
       '1. Predictive Maintenance',
       '   - Equipment failure prediction',
@@ -74,34 +70,32 @@ const TechnologyPage = () => {
       '   - Worker safety monitoring',
       '   - Emergency response systems'
     ];
-    
+
     yPos = 45;
     aiApps.forEach(line => {
       doc.text(line, 20, yPos);
       yPos += 6;
     });
-    
+
     doc.setFontSize(16);
     doc.text('STRATEGIC RECOMMENDATIONS', 20, yPos + 20);
-    
-    doc.setFontSize(12);
+
     const recommendations = [
       '1. Investment in R&D',
       '2. Skills development programs',
       '3. Technology partnerships',
       '4. Regulatory framework development'
     ];
-    
+
     yPos += 35;
     recommendations.forEach(line => {
       doc.text(line, 20, yPos);
       yPos += 8;
     });
-    
+
     doc.setFontSize(10);
     doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 280);
-    
-    // Save the PDF
+
     doc.save('namibia-uranium-technology-strategy-report.pdf');
   };
 
@@ -161,10 +155,20 @@ const TechnologyPage = () => {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             Advanced technologies, artificial intelligence applications, and areas for future development in uranium mining
           </p>
-          <Button onClick={generateStrategyReport} size="lg">
-            <Download className="h-5 w-5 mr-2" />
-            Download Full Strategy Report
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button onClick={generateStrategyReport} size="lg">
+              <Download className="h-5 w-5 mr-2" />
+              Download Full Strategy Report
+            </Button>
+            <Button
+              onClick={() => router.push('/contact-policy-makers')}
+              size="lg"
+              variant="outline"
+            >
+              <Users className="h-5 w-5 mr-2" />
+              Contact Policy Makers
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -201,7 +205,7 @@ const TechnologyPage = () => {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-2">Benefits:</h4>
                     <ul className="space-y-1">
@@ -220,10 +224,7 @@ const TechnologyPage = () => {
         </div>
       </section>
 
-      {/* AI Section */}
       <AISection />
-      
-      {/* What's Lacking Section */}
       <WhatsLackingSection />
     </div>
   );
