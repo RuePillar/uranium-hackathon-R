@@ -13,20 +13,18 @@ import * as htmlToImage from 'html-to-image';
 const Dashboards = () => {
   const chartRef = useRef(null);
 
-  const handleExport = () => {
-    if (chartRef.current === null) return;
+  const handleExport = async () => {
+  const node = document.getElementById('my-graph');
 
-    htmlToImage.toPng(chartRef.current, { cacheBust: true })
-      .then((dataUrl) => {
-        const link = document.createElement('a');
-        link.download = 'dashboard-chart.png';
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch((err) => {
-        console.error('Failed to export image', err);
-      });
-  };
+  if (!node) return;
+
+  const dataUrl = await htmlToImage.toPng(node);
+  
+  const link = document.createElement('a');
+  link.download = 'chart.png';
+  link.href = dataUrl;
+  link.click();
+};
 
   const [selectedTimeRange, setSelectedTimeRange] = useState('1year');
   const [selectedRegion, setSelectedRegion] = useState('all');
@@ -143,7 +141,8 @@ const Dashboards = () => {
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Refresh
                 </Button>
-            
+     
+
 
               <Button variant="outline" size="sm" onClick={handleExport}>
                 <Download className="w-4 h-4 mr-2" />
